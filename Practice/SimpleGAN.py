@@ -69,13 +69,20 @@ for epoch in range(num_epochs):
 
         ### Train Discriminator: max log(D(x)) + log(1 - D(G(z)))
         noise = torch.randn(batch_size, z_dim).to(device)
+        # forward pass
         fake = gen(noise)
+
         disc_real = disc(real).view(-1)
+        # calculating disc loss
         lossD_real = criterion(disc_real, torch.ones_like(disc_real))
         disc_fake = disc(fake).view(-1)
         lossD_fake = criterion(disc_fake, torch.zeros_like(disc_fake))
         lossD = (lossD_real + lossD_fake) / 2
+
+        # clearing the gradients
         disc.zero_grad()
+
+        # backward pass
         lossD.backward(retain_graph=True)
         opt_disc.step()
 
@@ -90,7 +97,7 @@ for epoch in range(num_epochs):
 
         if batch_idx == 0:
             print(
-                f"Epoch [{epoch}/{num_epochs}] Batch {batch_idx}/{len(loader)} \
+                f"Epoch [{epoch+1}/{num_epochs}] Batch {batch_idx}/{len(loader)} \
                       Loss D: {lossD:.4f}, loss G: {lossG:.4f}"
             )
 
